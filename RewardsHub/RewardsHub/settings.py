@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-^h5-#bx8-^xj&pj228^hz&xn@5wb#^vwz^zkdf)=2*2luejd=l
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['3.144.176.29', 'rewardshub.online', 'www.rewardshub.online', 'localhost', '127.0.0.1']
 
 
 # Application definition
