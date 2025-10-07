@@ -1,0 +1,5 @@
+nohup: ignoring input
+[2025-10-07 22:54:27 +0000] [15289] [INFO] Starting gunicorn 23.0.0
+[2025-10-07 22:54:27 +0000] [15289] [INFO] Listening at: http://127.0.0.1:8000 (15289)
+[2025-10-07 22:54:27 +0000] [15289] [INFO] Using worker: sync
+[2025-10-07 22:54:27 +0000] [15290] [INFO] Booting worker with pid: 15290
