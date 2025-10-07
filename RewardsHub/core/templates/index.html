@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rewards Hub - All Your Rewards in One Place</title>
+    <link rel="stylesheet" href="{% static 'core/styles.css' %}">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">🎁 Rewards Hub</div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="hero">
+            <h1>All Your Rewards.<br>One Simple App.</h1>
+            <p>Stop juggling multiple apps and loyalty cards.</p>
+            <p class="tagline">Track points from all your favorite restaurants, coffee shops, and stores in one convenient place.</p>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3 class="feature-title">Everything in One App</h3>
+                <p class="feature-desc">Connect all your food and retail rewards programs to view your points, perks, and available rewards instantly.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3 class="feature-title">Never Miss a Reward</h3>
+                <p class="feature-desc">Get notifications when you have rewards ready to use or when points are about to expire.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">⭐</div>
+                <h3 class="feature-title">Track Your Progress</h3>
+                <p class="feature-desc">See how close you are to your next free coffee, meal, or discount across all your programs.</p>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <h2 class="cta-title">Ready to Get Started?</h2>
+            <p class="cta-subtitle">Download the Rewards Hub app and start maximizing your rewards today.</p>
+            
+            <div class="app-buttons">
+                <a href="#" class="app-button">
+                    <div class="app-button-icon">
+                        <img src="{% static 'core/apple-icon.png' %}" alt="Apple App Store" class="app-icon" width="30" height="35">
+                    </div>
+                    <div class="app-button-text">
+                        <div class="app-button-small">Download on the</div>
+                        <div class="app-button-large">App Store</div>
+                    </div>
+                </a>
+                
+                <a href="#" class="app-button">
+                    <div class="app-button-icon">▶</div>
+                    <div class="app-button-text">
+                        <div class="app-button-small">GET IT ON</div>
+                        <div class="app-button-large">Google Play</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>© 2025 Rewards Hub. Making rewards simple and accessible.</p>
+    </footer>
+</body>
+</html>
