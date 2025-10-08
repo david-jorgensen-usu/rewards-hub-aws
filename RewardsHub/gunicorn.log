@@ -1176,3 +1176,7 @@ Not Found: /baccarathotelandresidences
 Not Found: /baccarat-hotel-and-residences
 Not Found: /shamal-holding
 Not Found: /api
+[2025-10-08 01:37:27 +0000] [15289] [INFO] Handling signal: hup
+[2025-10-08 01:37:27 +0000] [15289] [INFO] Hang up: Master
+[2025-10-08 01:37:27 +0000] [15289] [ERROR] Worker (pid:15290) was sent SIGHUP!
+[2025-10-08 01:37:27 +0000] [17463] [INFO] Booting worker with pid: 17463
