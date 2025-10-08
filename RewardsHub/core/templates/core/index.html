@@ -1,16 +1,11 @@
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rewards Hub - All Your Rewards in One Place</title>
+<html>
     <link rel="stylesheet" href="{% static 'core/styles.css' %}">
-</head>
-<body>
+
     <header class="header">
         <nav class="nav">
-            <div class="logo">🎁 Rewards Hub</div>
+            <img src="{% static 'core/appLogo.png' %}" width="40px" height="40px" alt="Main Logo">
+            <div class="logo">Rewards Hub</div>
         </nav>
     </header>
 
@@ -25,19 +20,19 @@
             <div class="feature-card">
                 <div class="feature-icon">📱</div>
                 <h3 class="feature-title">Everything in One App</h3>
-                <p class="feature-desc">Connect all your food and retail rewards programs to view your points, perks, and available rewards instantly.</p>
+                <p class="feature-desc">Connect all your food and retail rewards programs to view your points, perks, and available rewards.</p>
             </div>
 
             <div class="feature-card">
                 <div class="feature-icon">🎯</div>
                 <h3 class="feature-title">Never Miss a Reward</h3>
-                <p class="feature-desc">Get notifications when you have rewards ready to use or when points are about to expire.</p>
+                <p class="feature-desc">Get notifications when you're nearby a rewards location, and start inputing rewards immediately.</p>
             </div>
 
             <div class="feature-card">
                 <div class="feature-icon">⭐</div>
                 <h3 class="feature-title">Track Your Progress</h3>
-                <p class="feature-desc">See how close you are to your next free coffee, meal, or discount across all your programs.</p>
+                <p class="feature-desc">See how close you are to your next free drink, meal, or discount across all your programs.</p>
             </div>
         </div>
 
@@ -70,5 +65,4 @@
     <footer class="footer">
         <p>© 2025 Rewards Hub. Making rewards simple and accessible.</p>
     </footer>
-</body>
 </html>
