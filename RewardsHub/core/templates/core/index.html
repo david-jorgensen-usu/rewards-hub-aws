@@ -1,8 +1,11 @@
 {% load static %}
 <html>
+<head>
     <link rel="stylesheet" href="{% static 'core/styles.css' %}">
     <link rel="icon" href="{% static 'core/favicon.ico' %}" type="image/x-icon">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
     <header class="header">
         <nav class="nav">
             <img src="{% static 'core/appLogo.png' %}" alt="Main Logo" class="logo">
@@ -66,4 +69,5 @@
     <footer class="footer">
         <p>© 2025 Rewards Hub. Making rewards simple and accessible.</p>
     </footer>
+</body>
 </html>
