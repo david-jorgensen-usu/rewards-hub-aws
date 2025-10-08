@@ -33,13 +33,20 @@ header {
     gap: 15px;
 }
 
-.logo {
+.logo-text {
     font-size: 2rem;
     font-weight: bold;
     background: linear-gradient(135deg, #4b2a17 0%, #4b2a17 50%, #4b2a17 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+}
+
+.logo {
+  width: 40px;
+  height: 40px;
+  max-width: 100%;
+  height: auto; /* keeps proportions if you resize later */
 }
 
 .container {
