@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.http import HttpRequest, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+import logging
+logger = logging.getLogger(__name__)
 
 # Create your views here.
 def index(request: HttpRequest):
@@ -16,7 +18,7 @@ def feedback_api(request):
         try:
             data = json.loads(request.body)
             feedback = data.get("feedback")
-            print(f"🐱 Rhemi received feedback: {feedback}")
+            logger.info(f"Feedback received: {feedback}")
             return JsonResponse({"status": "success", "message": "Thanks for your feedback!"})
         except json.JSONDecodeError:
             return JsonResponse({"status": "error", "message": "Invalid JSON"}, status=400)
