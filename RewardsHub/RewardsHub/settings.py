@@ -58,25 +58,38 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 # Logging
+LOG_DIR = Path(BASE_DIR) / "logs"
+os.makedirs(LOG_DIR, exist_ok=True)
 
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{asctime} [{levelname}] {name}: {message}",
+            "style": "{",
+        },
+    },
     "handlers": {
         "file": {
             "level": "INFO",
             "class": "logging.FileHandler",
-            "filename": "/home/ubuntu/RewardsHub/RewardsHub/django.log",  # adjust path
+            "filename": LOG_DIR / "django.log",
+            "formatter": "verbose",
+        },
+        "gunicorn": {  # 👈 sends logs to gunicorn stream
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
         },
     },
     "loggers": {
         "django": {
-            "handlers": ["file"],
+            "handlers": ["file", "gunicorn"],
             "level": "INFO",
             "propagate": True,
         },
-        "__main__": {  # for your app
-            "handlers": ["file"],
+        "__main__": {
+            "handlers": ["file", "gunicorn"],
             "level": "INFO",
             "propagate": True,
         },
