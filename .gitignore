@@ -16,3 +16,4 @@ env/
 
 # OS-generated
 .DS_Store
+RewardsHub/logs/django.log
