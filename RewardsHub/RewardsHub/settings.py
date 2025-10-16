@@ -57,6 +57,35 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:19006",  # typical Expo dev server
 ]
 
+# Logging
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "file": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": "/home/ubuntu/RewardsHub/RewardsHub/django.log",  # adjust path
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["file"],
+            "level": "INFO",
+            "propagate": True,
+        },
+        "__main__": {  # for your app
+            "handlers": ["file"],
+            "level": "INFO",
+            "propagate": True,
+        },
+    },
+}
+
+# =====
+
+
 ROOT_URLCONF = "RewardsHub.urls"
 
 TEMPLATES = [
