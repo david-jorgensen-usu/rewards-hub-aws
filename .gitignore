@@ -21,3 +21,6 @@ RewardsHub/logs/django.log
 # Logs
 *.log
 RewardsHub/logs/
+
+# Ignore environment variables
+.env
