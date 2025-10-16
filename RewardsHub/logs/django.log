@@ -1843,3 +1843,13 @@ django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'ec2-3-144-176-
 2025-10-16 18:19:57,862 [WARNING] django.request: Not Found: /ReportServer
 2025-10-16 18:19:57,862 [WARNING] django.request: Not Found: /ReportServer
 2025-10-16 18:35:27,790 [INFO] core.views: Feedback received: Kachow
+2025-10-16 19:33:14,482 [WARNING] django.request: Not Found: /robots.txt
+2025-10-16 19:33:14,482 [WARNING] django.request: Not Found: /robots.txt
+2025-10-16 19:36:30,647 [WARNING] django.request: Not Found: /.git/config
+2025-10-16 19:36:30,647 [WARNING] django.request: Not Found: /.git/config
+2025-10-16 20:22:01,770 [WARNING] django.request: Not Found: /adminer.php
+2025-10-16 20:22:01,770 [WARNING] django.request: Not Found: /adminer.php
+2025-10-16 20:22:21,678 [WARNING] django.request: Not Found: /.env
+2025-10-16 20:22:21,678 [WARNING] django.request: Not Found: /.env
+2025-10-16 20:22:22,340 [WARNING] django.security.csrf: Forbidden (Referer checking failed - no Referer.): /
+2025-10-16 20:22:22,340 [WARNING] django.security.csrf: Forbidden (Referer checking failed - no Referer.): /
