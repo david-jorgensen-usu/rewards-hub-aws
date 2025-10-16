@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpRequest, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 import json
 import logging
 logger = logging.getLogger(__name__)
@@ -11,6 +12,7 @@ def index(request: HttpRequest):
 
 def test_api(request: HttpRequest):
     return JsonResponse({"message": "Hello from RewardsHub!"})
+
 
 @csrf_exempt
 def feedback_api(request):
