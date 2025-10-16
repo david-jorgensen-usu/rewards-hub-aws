@@ -39,4 +39,19 @@ def sign_up(req):
 
 @csrf_exempt
 def sign_in(req: HttpRequest):
-    pass
+    if req.method != "POST":
+        return JsonResponse({"error": "POST required"}, status=405)
+
+    try:
+        data = json.loads(req.body.decode("utf-8"))
+        email = data.get("email")
+        password = data.get("password")
+    except Exception:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+    user = authenticate(username=email, password=password)
+    if user is None:
+        return JsonResponse({"error": "Invalid credentials"}, status=401)
+
+    # You could add a success message or redirect behavior here
+    return JsonResponse({"message": "Login successful", "user": user.username})
