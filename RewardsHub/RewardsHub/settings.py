@@ -58,6 +58,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 # Logging
+# Logging
 LOG_DIR = Path(BASE_DIR) / "logs"
 os.makedirs(LOG_DIR, exist_ok=True)
 
@@ -77,24 +78,30 @@ LOGGING = {
             "filename": LOG_DIR / "django.log",
             "formatter": "verbose",
         },
-        "gunicorn": {  # 👈 sends logs to gunicorn stream
+        "console": {  # This ensures logs show in Gunicorn output
+            "level": "INFO",
             "class": "logging.StreamHandler",
             "formatter": "verbose",
         },
     },
+    "root": {
+        "handlers": ["file", "console"],
+        "level": "INFO",
+    },
     "loggers": {
         "django": {
-            "handlers": ["file", "gunicorn"],
+            "handlers": ["file", "console"],
             "level": "INFO",
             "propagate": True,
         },
         "__main__": {
-            "handlers": ["file", "gunicorn"],
+            "handlers": ["file", "console"],
             "level": "INFO",
             "propagate": True,
         },
     },
 }
+
 
 # =====
 
