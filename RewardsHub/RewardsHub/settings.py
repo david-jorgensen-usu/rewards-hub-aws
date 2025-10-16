@@ -32,8 +32,9 @@ ALLOWED_HOSTS = ['3.144.176.29', 'rewardshub.online', 'www.rewardshub.online', '
 # Application definition
 
 INSTALLED_APPS = [
+    'api.apps.ApiConfig',
     'core.apps.CoreConfig',
-    'registration.apps.CoreConfig',
+    'registration.apps.RegistrationConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
