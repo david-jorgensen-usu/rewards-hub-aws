@@ -7,6 +7,19 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Create your views here.
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def current_user(request):
+    user = request.user
+    return JsonResponse({
+        "id": user.id,
+        "email": user.email,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+    })
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def test_api(request: HttpRequest):

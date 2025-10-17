@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.views.decorators.csrf import csrf_exempt
 
-@csrf_exempt  # only for testing — remove later when using tokens!
 def sign_up(req):
     if req.method == "POST":
         try:
