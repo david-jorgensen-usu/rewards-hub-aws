@@ -1,16 +1,20 @@
 from django.http import HttpRequest, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
 import json
 import logging
 logger = logging.getLogger(__name__)
 
 # Create your views here.
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def test_api(request: HttpRequest):
     return JsonResponse({"message": "Hello from RewardsHub!"})
 
 
-@csrf_exempt
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def feedback_api(request):
     if request.method == "POST":
         try:
