@@ -12,6 +12,9 @@ logger = logging.getLogger(__name__)
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def current_user(request):
+    if not request.user.is_authenticated:
+        return Response({"detail": "Authentication credentials were not provided."}, status=status.HTTP_401_UNAUTHORIZED)
+
     user = request.user
     return JsonResponse({
         "id": user.id,
