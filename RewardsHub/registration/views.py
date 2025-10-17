@@ -3,7 +3,13 @@ from django.http import JsonResponse, HttpRequest
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 
+@csrf_exempt
+@api_view(["POST"])
+@permission_classes([AllowAny])
 def sign_up(req):
     if req.method == "POST":
         try:
@@ -35,8 +41,9 @@ def sign_up(req):
 
     return JsonResponse({"error": "Only POST requests allowed"}, status=405)
 
-
 @csrf_exempt
+@api_view(["POST"])
+@permission_classes([AllowAny])
 def sign_in(req: HttpRequest):
     if req.method != "POST":
         return JsonResponse({"error": "POST required"}, status=405)
