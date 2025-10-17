@@ -24,3 +24,5 @@ RewardsHub/logs/
 
 # Ignore environment variables
 .env
+
+# Migrations
