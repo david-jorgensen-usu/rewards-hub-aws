@@ -26,7 +26,7 @@ def test_api(request: HttpRequest):
     return JsonResponse({"message": "Hello from RewardsHub!"})
 
 
-@api_view(['GET'])
+@api_view(['GET','POST'])
 @permission_classes([IsAuthenticated])
 def feedback_api(request):
     if request.method == "POST":
