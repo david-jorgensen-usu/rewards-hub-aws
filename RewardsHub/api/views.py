@@ -28,7 +28,7 @@ def test_api(request: HttpRequest):
 
 
 @api_view(['GET','POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def feedback_api(request):
     if request.method == "POST":
         try:
