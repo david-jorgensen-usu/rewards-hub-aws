@@ -8,8 +8,8 @@ A high-level summary of major updates, features, and milestones.
 
 | Date | Update | Category | Impact |
 |------|---------|-----------|--------|
-| 10-15-25 | POST requests are being received by the server | Users | Step towards Functionality
-
+| 10-15-25 | POST requests are being received by the server | Users | Step towards Functionality |
+| 10-16-25 | Users are being valided by the server and given tokens, basic user info is displayed | Users | Completed required feature
 ---
 
 ## Sprint Backlog Tasks Left to Implement
@@ -17,5 +17,4 @@ A high-level summary of major updates, features, and milestones.
 
 | Description | Category | Priority |
 |-------------|----------|----------|
-| User authentication | Users | Very High |
 | User Feedback model | Database | High |
