@@ -6,6 +6,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 import json
 import logging
 logger = logging.getLogger(__name__)
+from core.models import LinkedApp
 
 # Create your views here.
 @api_view(["GET"])
@@ -49,3 +50,36 @@ def feedback_api(request):
     
     else:
         return JsonResponse({"status": "error", "message": "Only GET and POST allowed"}, status=405)
+
+@api_view(['GET','POST'])
+@permission_classes([IsAuthenticated])
+def programs(request):
+    # Return LinkedApp objects associated with the authenticated user.
+    user = request.user
+    if not user or not getattr(user, "is_authenticated", False):
+        return JsonResponse({"detail": "Authentication credentials were not provided."}, status=401)
+
+    linked_qs = LinkedApp.objects.filter(user=user).select_related('app')
+    results = []
+    for linked in linked_qs:
+        app = getattr(linked, 'app', None)
+        # Try to get a usable URL for the app logo if available
+        app_logo = None
+        try:
+            if app and getattr(app, 'logo', None):
+                # app.logo.url may not be available in some environments (e.g., no MEDIA_URL)
+                app_logo = request.build_absolute_uri(app.logo.url)
+        except Exception:
+            app_logo = None
+
+        results.append({
+            'id': linked.id,
+            'app_id': app.id if app else None,
+            'app_name': app.name if app else None,
+            'app_logo': app_logo,
+            'username': linked.username,
+            # intentionally do not return password
+        })
+
+    return JsonResponse({'linked_apps': results}, safe=False)
+
