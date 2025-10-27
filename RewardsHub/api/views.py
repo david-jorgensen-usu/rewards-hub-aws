@@ -45,7 +45,7 @@ def feedback_api(request):
     
     elif request.method == "GET":
         return JsonResponse({
-            "message": "🐱 Rhemi is listening! Send feedback via POST with a 'feedback' field."
+            "message": "Send feedback via POST with a 'feedback' field."
         })
     
     else:
