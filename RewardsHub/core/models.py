@@ -15,7 +15,6 @@ class AppCatalog(models.Model):
 class LinkedApp(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="linked_apps")
     app = models.ForeignKey(AppCatalog, on_delete=models.CASCADE, related_name="linked_users")
-    linked_at = models.DateTimeField(auto_now_add=True)
 
 
 class Notification(models.Model):
