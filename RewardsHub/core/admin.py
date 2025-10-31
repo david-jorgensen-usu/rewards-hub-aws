@@ -17,9 +17,9 @@ class AppCatalogAdmin(admin.ModelAdmin):
 
 @admin.register(LinkedApp)
 class LinkedAppAdmin(admin.ModelAdmin):
-    list_display = ("user", "app", "linked_at")
+    list_display = ("user", "app")  # removed linked_at
     search_fields = ("user__username", "app__name")
-    list_filter = ("linked_at",)
+    # removed list_filter referencing linked_at
 
 
 @admin.register(Notification)
