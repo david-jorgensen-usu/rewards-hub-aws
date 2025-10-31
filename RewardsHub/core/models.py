@@ -8,7 +8,7 @@ class AppCategory(models.Model):
 
 class AppCatalog(models.Model):
     name = models.CharField(max_length=200, unique=True)
-    reference = models.SlugField(unique=True)  # e.g. "mcdonalds", "chevron"
+    reference = models.CharField(max_length=200, default="")
     category = models.ForeignKey(AppCategory, on_delete=models.CASCADE, related_name="apps")
 
 
