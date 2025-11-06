@@ -36,41 +36,44 @@ def current_user(request):
     }
     return Response(data)
 
-
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def link_app(request):
     try:
         user = request.user
-        app_id = request.data.get("app_id")
-        notify = request.data.get("notify")
+        app_name = request.data.get("app_id")  # this is actually the app name
+        notify = request.data.get("notify")    # optional
 
-        if not app_id:
-            return Response({"error": "Missing app_id"}, status=400)
+        if not app_name:
+            return Response({"error": "Missing app_id (app name expected)"}, status=400)
 
+        # Lookup by name to get the AppCatalog object
         try:
-            app = AppCatalog.objects.get(id=app_id)
+            app = AppCatalog.objects.get(name=app_name)
         except AppCatalog.DoesNotExist:
-            return Response({"error": f"App with id {app_id} not found"}, status=404)
+            return Response({"error": f"App '{app_name}' not found"}, status=404)
 
+        # Get or create the linked app
         linked_app, created = LinkedApp.objects.get_or_create(user=user, app=app)
 
+        # Update notify if provided (optional toggle)
         if notify is not None:
             linked_app.notify = bool(notify)
             linked_app.save()
 
         return Response({
             "success": True,
-            "app_id": app_id,
+            "app_id": app.id,
             "notify": linked_app.notify,
             "created": created,
         })
 
     except Exception as e:
         import traceback
-        print("❌ link_app error:", e)
-        traceback.print_exc()
-        return Response({"error": str(e)}, status=500)
+        tb = traceback.format_exc()
+        print("💥 link_app error:", e)
+        print(tb)
+        return Response({"error": str(e), "traceback": tb}, status=500)
 
 
 @api_view(['GET','POST'])
