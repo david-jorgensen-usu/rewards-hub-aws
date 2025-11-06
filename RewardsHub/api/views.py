@@ -17,11 +17,10 @@ from core.models import LinkedApp, AppCatalog
 def current_user(request):
     user = request.user
 
-    # Build linked apps list as dictionaries
     linked_apps = [
         {
             "reference": la.app.reference,
-            "isActive": la.notify,  # map notify to isActive for the frontend
+            "isActive": la.notify,
             "notify": la.notify
         }
         for la in LinkedApp.objects.filter(user=user)
@@ -30,9 +29,13 @@ def current_user(request):
     data = {
         "id": user.id,
         "username": user.username,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "email": user.email,
         "linked_apps": linked_apps
     }
     return Response(data)
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
