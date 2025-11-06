@@ -21,9 +21,11 @@ class AppCatalog(models.Model):
 class LinkedApp(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="linked_apps")
     app = models.ForeignKey(AppCatalog, on_delete=models.CASCADE, related_name="linked_users")
+    notify = models.BooleanField(default=True)  # short, conveys notifications status
 
     def __str__(self):
-        return f"{self.user.username} → {self.app.name}"
+        status = "🔔" if self.notify else "🔕"
+        return f"{self.user.username} → {self.app.name} {status}"
 
 
 class Notification(models.Model):
