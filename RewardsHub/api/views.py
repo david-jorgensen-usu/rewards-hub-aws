@@ -37,10 +37,40 @@ def current_user(request):
     return Response(data)
 
 
-@api_view(['GET'])
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def test_api(request: HttpRequest):
-    return JsonResponse({"message": "Hello from RewardsHub!"})
+def link_app(request):
+    try:
+        user = request.user
+        app_id = request.data.get("app_id")
+        notify = request.data.get("notify")
+
+        if not app_id:
+            return Response({"error": "Missing app_id"}, status=400)
+
+        try:
+            app = AppCatalog.objects.get(id=app_id)
+        except AppCatalog.DoesNotExist:
+            return Response({"error": f"App with id {app_id} not found"}, status=404)
+
+        linked_app, created = LinkedApp.objects.get_or_create(user=user, app=app)
+
+        if notify is not None:
+            linked_app.notify = bool(notify)
+            linked_app.save()
+
+        return Response({
+            "success": True,
+            "app_id": app_id,
+            "notify": linked_app.notify,
+            "created": created,
+        })
+
+    except Exception as e:
+        import traceback
+        print("❌ link_app error:", e)
+        traceback.print_exc()
+        return Response({"error": str(e)}, status=500)
 
 
 @api_view(['GET','POST'])
