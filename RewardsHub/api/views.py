@@ -95,8 +95,12 @@ def link_app(request):
         if not app_id:
             return Response({"error": "Missing app_id"}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Try to interpret as ID or name
         try:
-            app = AppCatalog.objects.get(id=app_id)
+            if str(app_id).isdigit():
+                app = AppCatalog.objects.get(id=app_id)
+            else:
+                app = AppCatalog.objects.get(name__iexact=app_id)
         except AppCatalog.DoesNotExist:
             return Response({"error": "App not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -107,5 +111,4 @@ def link_app(request):
         return Response({"message": "App linked successfully"}, status=status.HTTP_201_CREATED)
 
     except Exception as e:
-        # Catch all unexpected errors
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
