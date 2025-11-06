@@ -96,28 +96,36 @@ def programs(request):
     return JsonResponse({'linked_apps': results}, safe=False)
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def link_app(request):
+    user = request.user
+    app_id = request.data.get("app_id")
+    notify = request.data.get("notify")  # optional toggle from app
+
+    if not app_id:
+        return Response({"error": "Missing app_id"}, status=400)
+
     try:
-        app_ref = request.data.get('app_id')  # your frontend sends 'reference'
-        if not app_ref:
-            return Response({"error": "Missing app_id"}, status=400)
+        app = AppCatalog.objects.get(id=app_id)
+    except AppCatalog.DoesNotExist:
+        return Response({"error": "App not found"}, status=404)
 
-        try:
-            # Lookup by reference (slug-like field)
-            app = AppCatalog.objects.get(reference__iexact=app_ref)
-        except AppCatalog.DoesNotExist:
-            return Response({"error": "App not found"}, status=404)
+    linked_app, created = LinkedApp.objects.get_or_create(user=user, app=app)
 
-        linked, created = LinkedApp.objects.get_or_create(user=request.user, app=app)
-        if not created:
-            return Response({"message": "App already linked"}, status=200)
+    # If a notify value was provided, update it.
+    if notify is not None:
+        linked_app.notify = bool(notify)
+        linked_app.save()
+    # Otherwise, leave notify as-is (it defaults to True on creation).
 
-        return Response({"message": "App linked successfully"}, status=201)
+    return Response({
+        "success": True,
+        "app_id": app_id,
+        "notify": linked_app.notify,
+        "created": created,
+    })
 
-    except Exception as e:
-        return Response({"error": str(e)}, status=500)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
