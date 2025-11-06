@@ -90,23 +90,22 @@ def programs(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def link_app(request):
-    user = request.user
-    app_id = request.data.get('app_id')
-
-    if not app_id:
-        return Response({"error": "Missing app_id"}, status=status.HTTP_400_BAD_REQUEST)
-
     try:
-        app = AppCatalog.objects.get(id=app_id)
-    except AppCatalog.DoesNotExist:
-        return Response({"error": "App not found"}, status=status.HTTP_404_NOT_FOUND)
+        app_id = request.data.get('app_id')
+        if not app_id:
+            return Response({"error": "Missing app_id"}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Check if already linked
-    existing = LinkedApp.objects.filter(user=user, app=app).first()
-    if existing:
-        return Response({"message": "App already linked"}, status=status.HTTP_200_OK)
+        try:
+            app = AppCatalog.objects.get(id=app_id)
+        except AppCatalog.DoesNotExist:
+            return Response({"error": "App not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    # Create the link
-    LinkedApp.objects.create(user=user, app=app)
+        linked, created = LinkedApp.objects.get_or_create(user=request.user, app=app)
+        if not created:
+            return Response({"message": "App already linked"}, status=status.HTTP_200_OK)
 
-    return Response({"message": "App linked successfully"}, status=status.HTTP_201_CREATED)
+        return Response({"message": "App linked successfully"}, status=status.HTTP_201_CREATED)
+
+    except Exception as e:
+        # Catch all unexpected errors
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
