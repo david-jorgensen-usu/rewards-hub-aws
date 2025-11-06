@@ -91,24 +91,21 @@ def programs(request):
 @permission_classes([IsAuthenticated])
 def link_app(request):
     try:
-        app_id = request.data.get('app_id')
-        if not app_id:
-            return Response({"error": "Missing app_id"}, status=status.HTTP_400_BAD_REQUEST)
+        app_ref = request.data.get('app_id')  # your frontend sends 'reference'
+        if not app_ref:
+            return Response({"error": "Missing app_id"}, status=400)
 
-        # Try to interpret as ID or name
         try:
-            if str(app_id).isdigit():
-                app = AppCatalog.objects.get(id=app_id)
-            else:
-                app = AppCatalog.objects.get(name__iexact=app_id)
+            # Lookup by reference (slug-like field)
+            app = AppCatalog.objects.get(reference__iexact=app_ref)
         except AppCatalog.DoesNotExist:
-            return Response({"error": "App not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "App not found"}, status=404)
 
         linked, created = LinkedApp.objects.get_or_create(user=request.user, app=app)
         if not created:
-            return Response({"message": "App already linked"}, status=status.HTTP_200_OK)
+            return Response({"message": "App already linked"}, status=200)
 
-        return Response({"message": "App linked successfully"}, status=status.HTTP_201_CREATED)
+        return Response({"message": "App linked successfully"}, status=201)
 
     except Exception as e:
-        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"error": str(e)}, status=500)
