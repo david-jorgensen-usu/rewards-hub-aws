@@ -1,6 +1,9 @@
 from django.http import HttpRequest, JsonResponse
 from django.contrib.auth.decorators import login_required
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
+from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework_simplejwt.authentication import JWTAuthentication
 import json
@@ -83,3 +86,27 @@ def programs(request):
 
     return JsonResponse({'linked_apps': results}, safe=False)
 
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def link_app(request):
+    user = request.user
+    app_id = request.data.get('app_id')
+
+    if not app_id:
+        return Response({"error": "Missing app_id"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        app = AppCatalog.objects.get(id=app_id)
+    except AppCatalog.DoesNotExist:
+        return Response({"error": "App not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    # Check if already linked
+    existing = LinkedApp.objects.filter(user=user, app=app).first()
+    if existing:
+        return Response({"message": "App already linked"}, status=status.HTTP_200_OK)
+
+    # Create the link
+    LinkedApp.objects.create(user=user, app=app)
+
+    return Response({"message": "App linked successfully"}, status=status.HTTP_201_CREATED)
