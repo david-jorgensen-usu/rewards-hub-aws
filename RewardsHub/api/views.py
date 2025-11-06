@@ -12,21 +12,27 @@ logger = logging.getLogger(__name__)
 from core.models import LinkedApp, AppCatalog
 
 # Create your views here.
-@api_view(["GET"])
-@authentication_classes([JWTAuthentication])
+@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def current_user(request):
-    if not request.user.is_authenticated:
-        return Response({"detail": "Authentication credentials were not provided."}, status=status.HTTP_401_UNAUTHORIZED)
-
     user = request.user
-    return JsonResponse({
-        "id": user.id,
-        "email": user.email,
-        "first_name": user.first_name,
-        "last_name": user.last_name,
-    })
 
+    # Build linked apps list as dictionaries
+    linked_apps = [
+        {
+            "reference": la.app.reference,
+            "isActive": la.notify,  # map notify to isActive for the frontend
+            "notify": la.notify
+        }
+        for la in LinkedApp.objects.filter(user=user)
+    ]
+
+    data = {
+        "id": user.id,
+        "username": user.username,
+        "linked_apps": linked_apps
+    }
+    return Response(data)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -90,36 +96,25 @@ def programs(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def link_app(request):
-    """
-    Link an app for the user, or update notify if already linked.
-    Expects JSON: {"app_id": "<reference_or_id>", "notify": true/false}
-    """
-    app_ref = request.data.get("app_id")
-    notify = request.data.get("notify", False)
-
-    if not app_ref:
-        return Response({"error": "Missing app_id"}, status=400)
-
-    # Find the app by reference or ID
     try:
-        if str(app_ref).isdigit():
-            app = AppCatalog.objects.get(id=int(app_ref))
-        else:
+        app_ref = request.data.get('app_id')  # your frontend sends 'reference'
+        if not app_ref:
+            return Response({"error": "Missing app_id"}, status=400)
+
+        try:
+            # Lookup by reference (slug-like field)
             app = AppCatalog.objects.get(reference__iexact=app_ref)
-    except AppCatalog.DoesNotExist:
-        return Response({"error": "App not found"}, status=404)
+        except AppCatalog.DoesNotExist:
+            return Response({"error": "App not found"}, status=404)
 
-    # Link or update
-    linked_app, created = LinkedApp.objects.get_or_create(user=request.user, app=app)
+        linked, created = LinkedApp.objects.get_or_create(user=request.user, app=app)
+        if not created:
+            return Response({"message": "App already linked"}, status=200)
 
-    if not created:
-        # Update notify field
-        linked_app.notify = notify
-        linked_app.save()
-        return Response({"message": "Linked app updated"}, status=200)
+        return Response({"message": "App linked successfully"}, status=201)
 
-    return Response({"message": "App linked successfully"}, status=201)
-
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
