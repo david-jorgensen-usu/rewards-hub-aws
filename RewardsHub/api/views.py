@@ -9,7 +9,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 import json
 import logging
 logger = logging.getLogger(__name__)
-from core.models import LinkedApp
+from core.models import LinkedApp, AppCatalog
 
 # Create your views here.
 @api_view(["GET"])
