@@ -109,3 +109,35 @@ def link_app(request):
 
     except Exception as e:
         return Response({"error": str(e)}, status=500)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def unlink_app(request):
+    """
+    Unlink a LinkedApp for the current user.
+    Expects JSON body: {"app_id": "<reference_or_id>"}
+    """
+    try:
+        app_ref = request.data.get('app_id')
+        if not app_ref:
+            return Response({"error": "Missing app_id"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Lookup app by reference or numeric ID
+        try:
+            if str(app_ref).isdigit():
+                app = AppCatalog.objects.get(id=int(app_ref))
+            else:
+                app = AppCatalog.objects.get(reference__iexact=app_ref)
+        except AppCatalog.DoesNotExist:
+            return Response({"error": "App not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Try to delete the link
+        try:
+            linked = LinkedApp.objects.get(user=request.user, app=app)
+            linked.delete()
+            return Response({"message": "App unlinked successfully"}, status=status.HTTP_200_OK)
+        except LinkedApp.DoesNotExist:
+            return Response({"error": "App not linked"}, status=status.HTTP_400_BAD_REQUEST)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
