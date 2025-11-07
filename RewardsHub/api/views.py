@@ -41,19 +41,22 @@ def current_user(request):
 def link_app(request):
     try:
         user = request.user
-        app_name = request.data.get("app_id")  # this is actually the app name
+        app_identifier = request.data.get("app_id")  # name or id
         notify = request.data.get("notify")
 
-        if not app_name:
-            return Response({"error": "Missing app_id (app name expected)"}, status=400)
+        if not app_identifier:
+            return Response({"error": "Missing app_id (can be name or id)"}, status=400)
 
-        # 🔧 Fix: Look up the AppCatalog object by name
+        # ✅ Handle both name and id
         try:
-            app = AppCatalog.objects.get(name=app_name)
+            if str(app_identifier).isdigit():
+                app = AppCatalog.objects.get(id=int(app_identifier))
+            else:
+                app = AppCatalog.objects.get(name=app_identifier)
         except AppCatalog.DoesNotExist:
-            return Response({"error": f"No app found with name '{app_name}'"}, status=404)
+            return Response({"error": f"No app found for '{app_identifier}'"}, status=404)
 
-        # Get or create link
+        # Get or create the link
         linked_app, _ = LinkedApp.objects.get_or_create(user=user, app=app)
 
         if notify is not None:
@@ -63,7 +66,7 @@ def link_app(request):
         return Response({
             "app": app.name,
             "notify": linked_app.notify,
-        })
+        }, status=200)
 
     except Exception as e:
         import traceback
