@@ -41,25 +41,22 @@ def current_user(request):
 def link_app(request):
     try:
         user = request.user
-        app_identifier = request.data.get("app_id")  # name or id
+        app_name = request.data.get("app_name")  # now clearly a name, not an ID
         notify = request.data.get("notify")
 
-        if not app_identifier:
-            return Response({"error": "Missing app_id (can be name or id)"}, status=400)
+        if not app_name:
+            return Response({"error": "Missing app_name"}, status=400)
 
-        # ✅ Handle both name and id
+        # Look up the app by its name
         try:
-            if str(app_identifier).isdigit():
-                app = AppCatalog.objects.get(id=int(app_identifier))
-            else:
-                app = AppCatalog.objects.get(name=app_identifier)
+            app = AppCatalog.objects.get(name=app_name)
         except AppCatalog.DoesNotExist:
-            return Response({"error": f"No app found for '{app_identifier}'"}, status=404)
+            return Response({"error": f"No app found with name '{app_name}'"}, status=404)
 
-        # Get or create the link
-        print("DEBUG:", app, type(app))
+        # Get or create the link between user and app
         linked_app, _ = LinkedApp.objects.get_or_create(user=user, app=app)
 
+        # Update the notify field if provided
         if notify is not None:
             linked_app.notify = notify
             linked_app.save()
