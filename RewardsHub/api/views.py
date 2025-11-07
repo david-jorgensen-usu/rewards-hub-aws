@@ -42,39 +42,33 @@ def link_app(request):
     try:
         user = request.user
         app_name = request.data.get("app_id")  # this is actually the app name
-        notify = request.data.get("notify")    # optional
+        notify = request.data.get("notify")
 
         if not app_name:
             return Response({"error": "Missing app_id (app name expected)"}, status=400)
 
-        # Lookup by name to get the AppCatalog object
+        # 🔧 Fix: Look up the AppCatalog object by name
         try:
             app = AppCatalog.objects.get(name=app_name)
         except AppCatalog.DoesNotExist:
-            return Response({"error": f"App '{app_name}' not found"}, status=404)
+            return Response({"error": f"No app found with name '{app_name}'"}, status=404)
 
-        # Get or create the linked app
-        linked_app, created = LinkedApp.objects.get_or_create(user=user, app=app)
+        # Get or create link
+        linked_app, _ = LinkedApp.objects.get_or_create(user=user, app=app)
 
-        # Update notify if provided (optional toggle)
         if notify is not None:
-            linked_app.notify = bool(notify)
+            linked_app.notify = notify
             linked_app.save()
 
         return Response({
-            "success": True,
-            "app_id": app.id,
+            "app": app.name,
             "notify": linked_app.notify,
-            "created": created,
         })
 
     except Exception as e:
         import traceback
-        tb = traceback.format_exc()
-        print("💥 link_app error:", e)
-        print(tb)
-        return Response({"error": str(e), "traceback": tb}, status=500)
-
+        traceback.print_exc()
+        return Response({"error": str(e)}, status=500)
 
 @api_view(['GET','POST'])
 @permission_classes([AllowAny])
