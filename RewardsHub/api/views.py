@@ -57,6 +57,7 @@ def link_app(request):
             return Response({"error": f"No app found for '{app_identifier}'"}, status=404)
 
         # Get or create the link
+        print("DEBUG:", app, type(app))
         linked_app, _ = LinkedApp.objects.get_or_create(user=user, app=app)
 
         if notify is not None:
