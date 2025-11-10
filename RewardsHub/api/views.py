@@ -75,7 +75,7 @@ def link_app(request):
         return Response({"error": str(e)}, status=500)
 
 @api_view(['GET', 'POST'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def feedback_api(request):
     if request.method == "POST":
         try:
@@ -88,15 +88,13 @@ def feedback_api(request):
                     status=400
                 )
 
-            user = request.user if request.user.is_authenticated else None
-
-            # Save to database
+            # Automatically tie to logged-in user
             feedback_entry = Feedback.objects.create(
-                user=user,
+                user=request.user,
                 message=feedback_text.strip(),
             )
 
-            logger.info(f"Feedback saved (ID {feedback_entry.id}) from {user or 'Anonymous'}")
+            logger.info(f"Feedback saved (ID {feedback_entry.id}) from {request.user.username}")
 
             return JsonResponse(
                 {"status": "success", "message": "Thanks for your feedback!"}
@@ -110,7 +108,7 @@ def feedback_api(request):
 
     elif request.method == "GET":
         return JsonResponse({
-            "message": "Send feedback via POST with a 'feedback' field."
+            "message": "Send feedback via POST with a 'feedback' field (must be authenticated)."
         })
 
     return JsonResponse(
