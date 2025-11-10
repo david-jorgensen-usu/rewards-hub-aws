@@ -38,3 +38,12 @@ class Notification(models.Model):
     def __str__(self):
         status = "Read" if self.read else "Unread"
         return f"{self.title} ({status})"
+
+
+class Feedback(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Feedback from {self.user or 'Anonymous'} at {self.created_at:%Y-%m-%d}"

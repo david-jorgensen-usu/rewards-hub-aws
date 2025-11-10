@@ -6,10 +6,13 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from django.core.mail import send_mail
+from rest_framework.response import Response
 import json
 import logging
+from core.models import LinkedApp, AppCatalog, Feedback
+
 logger = logging.getLogger(__name__)
-from core.models import LinkedApp, AppCatalog
 
 # Create your views here.
 @api_view(['GET'])
@@ -71,25 +74,49 @@ def link_app(request):
         traceback.print_exc()
         return Response({"error": str(e)}, status=500)
 
-@api_view(['GET','POST'])
+@api_view(['GET', 'POST'])
 @permission_classes([AllowAny])
 def feedback_api(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
-            feedback = data.get("feedback")
-            logger.info(f"Feedback received: {feedback}")
+            feedback_text = data.get("feedback")
+
+            if not feedback_text or not feedback_text.strip():
+                return JsonResponse({"status": "error", "message": "Feedback cannot be empty."}, status=400)
+
+            # Save to database
+            user = request.user if request.user.is_authenticated else None
+            feedback_entry = Feedback.objects.create(
+                user=user,
+                message=feedback_text.strip(),
+            )
+
+            logger.info(f"Feedback saved (ID {feedback_entry.id}): {feedback_text}")
+
+            # Send email notification
+            try:
+                send_mail(
+                    subject="New Feedback Received — RewardsHub",
+                    message=f"Feedback from {user or 'Anonymous'}:\n\n{feedback_text}",
+                    from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'no-reply@rewardshub.online'),
+                    recipient_list=['team@rewardshub.online'],  # change to your inbox
+                    fail_silently=True,
+                )
+            except Exception as e:
+                logger.error(f"Failed to send feedback email: {e}")
+
             return JsonResponse({"status": "success", "message": "Thanks for your feedback!"})
+
         except json.JSONDecodeError:
             return JsonResponse({"status": "error", "message": "Invalid JSON"}, status=400)
-    
+
     elif request.method == "GET":
         return JsonResponse({
             "message": "Send feedback via POST with a 'feedback' field."
         })
-    
-    else:
-        return JsonResponse({"status": "error", "message": "Only GET and POST allowed"}, status=405)
+
+    return JsonResponse({"status": "error", "message": "Only GET and POST allowed"}, status=405)
 
 @api_view(['GET','POST'])
 @permission_classes([IsAuthenticated])
