@@ -155,23 +155,22 @@ def programs(request):
 def link_app(request):
     user = request.user
     app_id = request.data.get("app_id")
-    notify = request.data.get("notify")  # optional toggle from app
+    notify = request.data.get("notify")
 
     if not app_id:
         return Response({"error": "Missing app_id"}, status=400)
 
     try:
-        app = AppCatalog.objects.get(id=app_id)
-    except AppCatalog.DoesNotExist:
+        # Try converting app_id to int in case a string is passed
+        app = AppCatalog.objects.get(id=int(app_id))
+    except (ValueError, AppCatalog.DoesNotExist):
         return Response({"error": "App not found"}, status=404)
 
     linked_app, created = LinkedApp.objects.get_or_create(user=user, app=app)
 
-    # If a notify value was provided, update it.
     if notify is not None:
-        linked_app.notify = bool(notify)
+        linked_app.notify = str(notify).lower() == "true"
         linked_app.save()
-    # Otherwise, leave notify as-is (it defaults to True on creation).
 
     return Response({
         "success": True,
