@@ -154,27 +154,28 @@ def programs(request):
 @permission_classes([IsAuthenticated])
 def link_app(request):
     user = request.user
-    app_id = request.data.get("app_id")
-    notify = request.data.get("notify")
+    app_ref = request.data.get("app_id")  # app_id is actually the reference
+    notify = request.data.get("notify")  # optional toggle from app
 
-    if not app_id:
+    if not app_ref:
         return Response({"error": "Missing app_id"}, status=400)
 
     try:
-        # Try converting app_id to int in case a string is passed
-        app = AppCatalog.objects.get(id=int(app_id))
-    except (ValueError, AppCatalog.DoesNotExist):
+        # Lookup AppCatalog by reference instead of id
+        app = AppCatalog.objects.get(reference=app_ref)
+    except AppCatalog.DoesNotExist:
         return Response({"error": "App not found"}, status=404)
 
     linked_app, created = LinkedApp.objects.get_or_create(user=user, app=app)
 
+    # Update notify if provided
     if notify is not None:
-        linked_app.notify = str(notify).lower() == "true"
+        linked_app.notify = bool(notify)
         linked_app.save()
 
     return Response({
         "success": True,
-        "app_id": app_id,
+        "app_id": app.id,           # returning the integer id now
         "notify": linked_app.notify,
         "created": created,
     })
