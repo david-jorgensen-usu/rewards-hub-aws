@@ -83,40 +83,40 @@ def feedback_api(request):
             feedback_text = data.get("feedback")
 
             if not feedback_text or not feedback_text.strip():
-                return JsonResponse({"status": "error", "message": "Feedback cannot be empty."}, status=400)
+                return JsonResponse(
+                    {"status": "error", "message": "Feedback cannot be empty."},
+                    status=400
+                )
+
+            user = request.user if request.user.is_authenticated else None
 
             # Save to database
-            user = request.user if request.user.is_authenticated else None
             feedback_entry = Feedback.objects.create(
                 user=user,
                 message=feedback_text.strip(),
             )
 
-            logger.info(f"Feedback saved (ID {feedback_entry.id}): {feedback_text}")
+            logger.info(f"Feedback saved (ID {feedback_entry.id}) from {user or 'Anonymous'}")
 
-            # Send email notification
-            try:
-                send_mail(
-                    subject="New Feedback Received — RewardsHub",
-                    message=f"Feedback from {user or 'Anonymous'}:\n\n{feedback_text}",
-                    from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'no-reply@rewardshub.online'),
-                    recipient_list=['team@rewardshub.online'],  # change to your inbox
-                    fail_silently=True,
-                )
-            except Exception as e:
-                logger.error(f"Failed to send feedback email: {e}")
-
-            return JsonResponse({"status": "success", "message": "Thanks for your feedback!"})
+            return JsonResponse(
+                {"status": "success", "message": "Thanks for your feedback!"}
+            )
 
         except json.JSONDecodeError:
-            return JsonResponse({"status": "error", "message": "Invalid JSON"}, status=400)
+            return JsonResponse(
+                {"status": "error", "message": "Invalid JSON"},
+                status=400
+            )
 
     elif request.method == "GET":
         return JsonResponse({
             "message": "Send feedback via POST with a 'feedback' field."
         })
 
-    return JsonResponse({"status": "error", "message": "Only GET and POST allowed"}, status=405)
+    return JsonResponse(
+        {"status": "error", "message": "Only GET and POST allowed"},
+        status=405
+    )
 
 @api_view(['GET','POST'])
 @permission_classes([IsAuthenticated])
