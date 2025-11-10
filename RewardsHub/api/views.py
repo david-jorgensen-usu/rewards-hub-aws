@@ -8,6 +8,7 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.core.mail import send_mail
 from rest_framework.response import Response
+from django.contrib.auth import authenticate
 import json
 import logging
 from core.models import LinkedApp, AppCatalog, Feedback
@@ -211,3 +212,25 @@ def unlink_app(request):
 
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def delete_account_api(request):
+    """
+    Deletes the authenticated user's account after verifying password.
+    """
+    password = request.data.get("password")
+    user = request.user
+
+    if not password:
+        return Response({"status": "error", "message": "Password is required."}, status=400)
+
+    # Verify password
+    if not user.check_password(password):
+        return Response({"status": "error", "message": "Incorrect password."}, status=403)
+
+    # Delete user
+    username = user.username
+    user.delete()
+    return Response({"status": "success", "message": f"Account '{username}' has been deleted."})
