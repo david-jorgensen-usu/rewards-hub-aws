@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from django.contrib.auth import authenticate
 import json
 import logging
-from core.models import LinkedApp, AppCatalog, Feedback
+from core.models import LinkedApp, AppCatalog, Feedback, Notification
 
 logger = logging.getLogger(__name__)
 
@@ -149,7 +149,6 @@ def programs(request):
 
     return JsonResponse({'linked_apps': results}, safe=False)
 
-
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def link_app(request):
@@ -179,7 +178,6 @@ def link_app(request):
         "notify": linked_app.notify,
         "created": created,
     })
-
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -213,7 +211,6 @@ def unlink_app(request):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def delete_account_api(request):
@@ -234,3 +231,30 @@ def delete_account_api(request):
     username = user.username
     user.delete()
     return Response({"status": "success", "message": f"Account '{username}' has been deleted."})
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def save_notification(request):
+    """
+    Saves a notification that the client app has *already* decided to show.
+    No filtering, no appCatalogId checks — Expo handles that.
+    """
+    user = request.user
+    data = request.data
+
+    title = data.get("title")
+    message = data.get("message")
+
+    if not title or not message:
+        return Response(
+            {"error": "Missing 'title' or 'message'."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    Notification.objects.create(
+        user=user,
+        title=title,
+        message=message,
+    )
+
+    return Response({"success": True}, status=status.HTTP_201_CREATED)

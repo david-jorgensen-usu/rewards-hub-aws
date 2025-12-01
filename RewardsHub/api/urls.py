@@ -8,4 +8,5 @@ urlpatterns = [
     path("link-app/", views.link_app, name="link_app"),
     path("unlink-app/", views.unlink_app, name="unlink_app"),
     path("delete-account/", views.delete_account_api, name="delete-account"),
+    path("save-notification/", views.save_notification, name="save-notification"),
 ]
