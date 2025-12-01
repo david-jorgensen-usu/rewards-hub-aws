@@ -258,3 +258,25 @@ def save_notification(request):
     )
 
     return Response({"success": True}, status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_notifications(request):
+    user = request.user
+
+    notifications = Notification.objects.filter(
+        user=user
+    ).order_by('-created_at')
+
+    data = [
+        {
+            "id": n.id,
+            "title": n.title,
+            "message": n.message,
+            "read": n.read,
+            "created_at": n.created_at.isoformat(),
+        }
+        for n in notifications
+    ]
+
+    return JsonResponse(data, safe=False)
